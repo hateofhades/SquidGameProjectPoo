@@ -20,20 +20,32 @@ string cities[30] = {"New York", "Bucharest", "London", "Paris", "Berlin", "Madr
 Game::Game()
 {
     srand(time(NULL));
+    this->prize = 0;
 
     int playerNumbers = 1;
+    int assignedSupervisor = 0;
+    int supervisorNumber = 1;
     for (int i = 0; i < 3; i++)
     {
         alivePlayers[i] = 33;
         for (int j = 0; j < 36; j++)
         {
+            if ((j - 3) % 11 == 0)
+            {
+                assignedSupervisor++;
+            }
+
             if (j >= 3)
             {
                 this->players[i][j] = new Player(firstNames[rand() % 30], lastNames[rand() % 30], cities[rand() % 30]);
                 (*this->players[i][j]).setPlayerNumber(playerNumbers++);
+                (*this->players[i][j]).setSupervisorNumber(assignedSupervisor);
             }
             else
+            {
                 this->players[i][j] = new Supervisor(firstNames[rand() % 30], lastNames[rand() % 30], cities[rand() % 30], (supervisorType)i);
+                (*this->players[i][j]).setSupervisorNumber(supervisorNumber++);
+            }
         }
     }
 
@@ -88,7 +100,14 @@ void Game::removePlayer(int playerNumber)
         if ((int)(*this->players[team - 1][i]).getPlayerNumber() == playerNumber)
         {
             cout << "Player " << playerNumber << ":  " << (*this->players[team - 1][i]).getFullName() << " has been eliminated!" << endl;
+
+            this->prize += (*this->players[team - 1][i]).getDebt();
+            cout << (*this->players[team - 1][i]).getDebt() << "$ has been added to the prize pool. Total prize pool: " << this->prize << "$" << endl;
             this->alivePlayers[team - 1]--;
+
+            int supervisorNumber = (*this->players[team - 1][i]).getSupervisorNumber();
+            this->supervisorPrize[supervisorNumber - 1] += (*this->players[team - 1][i]).getDebt();
+            cout << (*this->players[team - 1][i]).getDebt() << "$ has been added to the supervisor prize pool for supervisor number " << supervisorNumber << ": " << (*this->players[team - 1][supervisorNumber / (team * 3) - 1]).getFullName() << "." << endl;
 
             for (int j = i + 1; j <= 3 + this->alivePlayers[team - 1]; j++)
                 (*this->players[team - 1][j - 1]) = (*this->players[team - 1][j]);

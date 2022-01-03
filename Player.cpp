@@ -62,6 +62,16 @@ unsigned int Player::getPlayerNumber()
     return this->playerNumber;
 }
 
+unsigned int Player::getSupervisorNumber()
+{
+    return this->supervisorNumber;
+}
+
+void Player::setSupervisorNumber(unsigned int supervisorNumber)
+{
+    this->supervisorNumber = supervisorNumber;
+}
+
 void Player::setPlayerNumber(unsigned int playerNumber)
 {
     this->playerNumber = playerNumber;
@@ -74,5 +84,6 @@ void Player::printInfo()
     cout << "City: " << this->getCity() << endl;
     cout << "Debt: " << this->getDebt() << endl;
     cout << "Weight: " << this->getWeight() << endl;
+    cout << "Assigned Supervisor: " << this->supervisorNumber << endl;
     cout << "----------------------------------------" << endl;
 }

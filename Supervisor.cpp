@@ -31,7 +31,7 @@ Supervisor::Supervisor(string firstName, string lastName, string city, superviso
 void Supervisor::printInfo()
 {
     cout << "----------------------------------------" << endl;
-    cout << "Supervisor: " << this->getFullName() << endl;
+    cout << "Supervisor " << this->getSupervisorNumber() << ": " << this->getFullName() << endl;
     cout << "City: " << this->getCity() << endl;
     cout << "Debt: " << this->getDebt() << endl;
     cout << "Weight: " << this->getWeight() << endl;

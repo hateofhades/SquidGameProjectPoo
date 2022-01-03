@@ -9,7 +9,8 @@ class Game
 {
 private:
     Player *players[3][36];
-    int alivePlayers[36];
+    int alivePlayers[3];
+    int prize, supervisorPrize[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 public:
     Game();

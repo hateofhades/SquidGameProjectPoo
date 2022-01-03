@@ -7,7 +7,7 @@ class Player
 {
 private:
     string firstName, lastName, city;
-    unsigned int debt, weight, playerNumber;
+    unsigned int debt, weight, playerNumber, supervisorNumber;
 
 public:
     Player();
@@ -19,6 +19,8 @@ public:
     unsigned int getDebt();
     unsigned int getWeight();
     unsigned int getPlayerNumber();
+    unsigned int getSupervisorNumber();
+    void setSupervisorNumber(unsigned int supervisorNumber);
     void setPlayerNumber(unsigned int playerNumber);
     virtual void printInfo();
 };
