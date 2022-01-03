@@ -7,7 +7,6 @@ using namespace std;
 int main()
 {
     Game game;
-    game.printInfo();
-
+    game.removePlayer(36);
     return 0;
 }

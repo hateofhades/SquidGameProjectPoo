@@ -15,4 +15,6 @@ public:
     Game();
     Player *getAlivePlayers();
     void printInfo();
+    void printInfo(int team);
+    void removePlayer(int playerNumber);
 };

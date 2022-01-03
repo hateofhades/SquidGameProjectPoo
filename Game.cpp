@@ -40,7 +40,9 @@ Game::Game()
     cout << "Welcome to the " << rand() % 70 + 1 << "th edition of the C++ Squid Game!" << endl;
     cout << "There are " << playerNumbers - 1 << " players in the game." << endl;
     cout << "In a total of 3 teams! Each has assigned 3 supervisors and 33 players." << endl;
-    cout << "Let the best win! Good luck!" << endl;
+    cout << "Let the best win! Good luck!" << endl
+         << endl
+         << endl;
 };
 
 void Game::printInfo()
@@ -49,9 +51,47 @@ void Game::printInfo()
     {
         cout << "----------------------------------------" << endl;
         cout << "Team " << i + 1 << ":" << endl;
-        for (int j = 0; j < 36; j++)
+        for (int j = 0; j < 3 + this->alivePlayers[i]; j++)
             (*this->players[i][j]).printInfo();
 
         cout << "----------------------------------------" << endl;
     }
+}
+
+void Game::printInfo(int team)
+{
+    if (team <= 0 || team > 3)
+    {
+        cout << "Invalid team number!" << endl;
+        return;
+    }
+
+    cout << "----------------------------------------" << endl;
+    cout << "Team " << team << ":" << endl;
+    for (int j = 0; j < 3 + this->alivePlayers[team - 1]; j++)
+        (*this->players[team - 1][j]).printInfo();
+
+    cout << "----------------------------------------" << endl;
+}
+
+void Game::removePlayer(int playerNumber)
+{
+    int team;
+    if (playerNumber >= 1 && playerNumber <= 33)
+        team = 1;
+    else if (playerNumber >= 34 && playerNumber <= 66)
+        team = 2;
+    else
+        team = 3;
+
+    for (int i = 3; i < 3 + this->alivePlayers[team - 1]; i++)
+        if ((int)(*this->players[team - 1][i]).getPlayerNumber() == playerNumber)
+        {
+            cout << "Player " << playerNumber << ":  " << (*this->players[team - 1][i]).getFullName() << " has been eliminated!" << endl;
+            this->alivePlayers[team - 1]--;
+
+            for (int j = i + 1; j <= 3 + this->alivePlayers[team - 1]; j++)
+                (*this->players[team - 1][j - 1]) = (*this->players[team - 1][j]);
+            break;
+        }
 }
