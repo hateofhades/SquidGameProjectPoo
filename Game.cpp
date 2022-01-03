@@ -45,6 +45,7 @@ Game::Game()
             {
                 this->players[i][j] = new Supervisor(firstNames[rand() % 30], lastNames[rand() % 30], cities[rand() % 30], (supervisorType)i);
                 (*this->players[i][j]).setSupervisorNumber(supervisorNumber++);
+                this->supervisorPrize[supervisorNumber] -= this->players[i][j]->getDebt();
             }
         }
     }
@@ -86,6 +87,20 @@ void Game::printInfo(int team)
     cout << "----------------------------------------" << endl;
 }
 
+void Game::printLeftPlayers()
+{
+    cout << "----------------------------------------" << endl;
+    cout << "Players left in the game:" << endl;
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 3; j < 3 + this->alivePlayers[i]; j++)
+        {
+            cout << "Player " << (*this->players[i][j]).getPlayerNumber() << ": " << (*this->players[i][j]).getFullName() << endl;
+        }
+    }
+    cout << "----------------------------------------" << endl;
+}
+
 void Game::removePlayer(int playerNumber)
 {
     int team;
@@ -107,10 +122,377 @@ void Game::removePlayer(int playerNumber)
 
             int supervisorNumber = (*this->players[team - 1][i]).getSupervisorNumber();
             this->supervisorPrize[supervisorNumber - 1] += (*this->players[team - 1][i]).getDebt();
-            cout << (*this->players[team - 1][i]).getDebt() << "$ has been added to the supervisor prize pool for supervisor number " << supervisorNumber << ": " << (*this->players[team - 1][supervisorNumber / (team * 3) - 1]).getFullName() << "." << endl;
+            cout << (*this->players[team - 1][i]).getDebt() << "$ has been added to the supervisor prize pool for supervisor number " << supervisorNumber << ": " << (*this->players[team - 1][supervisorNumber - ((team - 1) * 3) - 1]).getFullName() << "." << endl;
 
             for (int j = i + 1; j <= 3 + this->alivePlayers[team - 1]; j++)
                 (*this->players[team - 1][j - 1]) = (*this->players[team - 1][j]);
             break;
         }
+}
+
+void Game::playRedLightGreenLight()
+{
+    cout << "First game: Red Light Green Light" << endl;
+    cout << "----------------------------------------" << endl;
+
+    for (int i = 0; i < 3; i++)
+        for (int j = 3; j < 3 + this->alivePlayers[i]; j++)
+            if ((*this->players[i][j]).getPlayerNumber() % 2 == 0)
+            {
+                this->removePlayer((*this->players[i][j]).getPlayerNumber());
+                j--;
+            }
+
+    cout << "----------------------------------------" << endl;
+    cout << "First game has ended!" << endl
+         << "----------------------------------------" << endl
+         << "Left players: " << this->alivePlayers[0] + this->alivePlayers[1] + this->alivePlayers[2] << endl
+         << "Total prize pool: " << this->prize << "$" << endl
+         << "----------------------------------------" << endl
+         << endl;
+    this->printLeftPlayers();
+}
+
+void Game::playTugOfWar()
+{
+    cout << "Second game: Tug of War" << endl;
+    cout << "----------------------------------------" << endl;
+
+    int totalAlive = 0;
+    Player *tugPlayers[this->alivePlayers[0] + this->alivePlayers[1] + this->alivePlayers[2]];
+
+    for (int i = 0; i < 3; i++)
+        for (int j = 3; j < 3 + this->alivePlayers[i]; j++)
+            tugPlayers[totalAlive++] = this->players[i][j];
+
+    Player *teams[4][totalAlive / 4];
+    int teamWeights[4] = {0, 0, 0, 0};
+
+    for (int i = 0; i < 4; i++)
+    {
+        cout << endl
+             << "----------------------------------------" << endl;
+        cout << "Team " << i + 1 << ":" << endl;
+        for (int j = 0; j < totalAlive / 4; j++)
+        {
+            int chosen;
+
+            do
+            {
+                chosen = rand() % totalAlive;
+            } while (tugPlayers[chosen] == NULL);
+
+            teams[i][j] = tugPlayers[chosen];
+            teamWeights[i] += (*teams[i][j]).getWeight();
+            tugPlayers[chosen] = NULL;
+
+            cout << "Player " << (*teams[i][j]).getPlayerNumber() << ": " << (*teams[i][j]).getFullName() << endl;
+        }
+    }
+
+    cout << "----------------------------------------" << endl;
+    for (int i = 0; i < totalAlive; i++)
+        if (tugPlayers[i] != NULL)
+            cout << "Player " << (*tugPlayers[i]).getPlayerNumber() << ": " << (*tugPlayers[i]).getFullName() << " has not been assigned a team, and has advanced further!" << endl;
+
+    cout << endl
+         << "----------------------------------------" << endl;
+    cout << "First game of Tug Of War" << endl
+         << "Team 1 vs. Team 2" << endl;
+    cout << "----------------------------------------" << endl;
+
+    if (teamWeights[0] >= teamWeights[1])
+    {
+        cout << "Team 1 has won the game!" << endl;
+        cout << "Team 2 has been eliminated!" << endl;
+
+        for (int i = 0; i < totalAlive / 4; i++)
+            this->removePlayer((*teams[1][i]).getPlayerNumber());
+    }
+    else
+    {
+        cout << "Team 2 has won the game!" << endl;
+        cout << "Team 1 has been eliminated!" << endl
+             << endl;
+
+        for (int i = 0; i < totalAlive / 4; i++)
+            this->removePlayer((*teams[0][i]).getPlayerNumber());
+    }
+
+    cout << "----------------------------------------" << endl;
+    cout << "Second game of Tug Of War" << endl
+         << "Team 3 vs. Team 4" << endl;
+    cout << "----------------------------------------" << endl;
+
+    if (teamWeights[2] >= teamWeights[3])
+    {
+        cout << "Team 3 has won the game!" << endl;
+        cout << "Team 4 has been eliminated!" << endl;
+
+        for (int i = 0; i < totalAlive / 4; i++)
+            this->removePlayer((*teams[3][i]).getPlayerNumber());
+    }
+    else
+    {
+        cout << "Team 4 has won the game!" << endl;
+        cout << "Team 3 has been eliminated!" << endl
+             << endl;
+
+        for (int i = 0; i < totalAlive / 4; i++)
+            this->removePlayer((*teams[2][i]).getPlayerNumber());
+    }
+
+    cout << "----------------------------------------" << endl;
+    cout << "Second game has ended!" << endl
+         << "----------------------------------------" << endl
+         << "Left players: " << this->alivePlayers[0] + this->alivePlayers[1] + this->alivePlayers[2] << endl
+         << "Total prize pool: " << this->prize << "$" << endl
+         << "----------------------------------------" << endl
+         << endl;
+    this->printLeftPlayers();
+}
+
+void Game::playMarbles()
+{
+    cout << "Third game: Marbles" << endl;
+    cout << "----------------------------------------" << endl;
+
+    int totalMarblers = 0;
+    Player *marblesPlayers[this->alivePlayers[0] + this->alivePlayers[1] + this->alivePlayers[2]];
+
+    for (int i = 0; i < 3; i++)
+        for (int j = 3; j < 3 + this->alivePlayers[i]; j++)
+            marblesPlayers[totalMarblers++] = this->players[i][j];
+
+    while (totalMarblers > 1)
+    {
+        int player1 = rand() % totalMarblers, player2;
+
+        do
+        {
+            player2 = rand() % totalMarblers;
+        } while (player1 == player2);
+
+        int marbles1 = rand() % 6 + 1, marbles2;
+
+        do
+        {
+            marbles2 = rand() % 6 + 1;
+        } while (marbles2 == marbles1);
+
+        cout << (*marblesPlayers[player1]).getFullName() << " vs." << (*marblesPlayers[player2]).getFullName() << endl;
+        if (marbles1 > marbles2)
+        {
+            int lostNumber = (*marblesPlayers[player1]).getPlayerNumber();
+
+            totalMarblers--;
+            for (int i = player1 + 1; i <= totalMarblers; i++)
+                marblesPlayers[i - 1] = marblesPlayers[i];
+
+            if (player1 < player2)
+                player2--;
+
+            totalMarblers--;
+            for (int i = player2 + 1; i <= totalMarblers; i++)
+                marblesPlayers[i - 1] = marblesPlayers[i];
+
+            this->removePlayer(lostNumber);
+        }
+        else
+        {
+            int lostNumber = (*marblesPlayers[player2]).getPlayerNumber();
+
+            totalMarblers--;
+            for (int i = player1 + 1; i <= totalMarblers; i++)
+                marblesPlayers[i - 1] = marblesPlayers[i];
+            totalMarblers--;
+
+            if (player1 < player2)
+                player2--;
+
+            for (int i = player2 + 1; i <= totalMarblers; i++)
+                marblesPlayers[i - 1] = marblesPlayers[i];
+
+            this->removePlayer(lostNumber);
+        }
+    }
+
+    if (totalMarblers)
+        cout << (*marblesPlayers[0]).getFullName() << " has advanced without playing." << endl;
+
+    cout << "----------------------------------------" << endl;
+    cout << "Third game has ended!" << endl
+         << "----------------------------------------" << endl
+         << "Left players: " << this->alivePlayers[0] + this->alivePlayers[1] + this->alivePlayers[2] << endl
+         << "Total prize pool: " << this->prize << "$" << endl
+         << "----------------------------------------" << endl
+         << endl;
+    this->printLeftPlayers();
+}
+
+void Game::playGenken()
+{
+    cout << "Fourth and last game: Genken" << endl;
+    cout << "----------------------------------------" << endl;
+
+    int genkens = 0;
+    Player *genkenPlayers[this->alivePlayers[0] + this->alivePlayers[1] + this->alivePlayers[2]];
+
+    for (int i = 0; i < 3; i++)
+        for (int j = 3; j < 3 + this->alivePlayers[i]; j++)
+            genkenPlayers[genkens++] = this->players[i][j];
+
+    while (genkens > 1)
+    {
+        cout << "----------------------------------------" << endl;
+        cout << (*genkenPlayers[genkens - 1]).getFullName() << " vs. " << (*genkenPlayers[genkens - 2]).getFullName() << endl;
+
+        int player1choose, player2choose;
+        do
+        {
+            player1choose = rand() % 3 + 1;
+            player2choose = rand() % 3 + 1;
+
+            cout << "Player 1 choose: " << (player1choose == 1 ? "Rock" : player1choose == 2 ? "Paper"
+                                                                                             : "Scissors")
+                 << endl;
+            cout << "Player 2 choose: " << (player2choose == 1 ? "Rock" : player2choose == 2 ? "Paper"
+                                                                                             : "Scissors")
+                 << endl;
+            if (player1choose == player2choose)
+                cout << endl
+                     << "Draw!" << endl
+                     << endl;
+        } while (player1choose == player2choose);
+
+        if (player1choose == 1)
+        {
+            if (player2choose == 2)
+            {
+                this->removePlayer((*genkenPlayers[genkens - 1]).getPlayerNumber());
+                genkens--;
+            }
+            else
+            {
+                int eliminatedNumber = (*genkenPlayers[genkens - 2]).getPlayerNumber();
+                genkenPlayers[genkens - 2] = genkenPlayers[genkens - 1];
+                this->removePlayer(eliminatedNumber);
+                genkens--;
+            }
+        }
+        else if (player1choose == 2)
+        {
+            if (player2choose == 1)
+            {
+                int eliminatedNumber = (*genkenPlayers[genkens - 2]).getPlayerNumber();
+                genkenPlayers[genkens - 2] = genkenPlayers[genkens - 1];
+                this->removePlayer(eliminatedNumber);
+                genkens--;
+            }
+            else
+            {
+                this->removePlayer((*genkenPlayers[genkens - 1]).getPlayerNumber());
+                genkens--;
+            }
+        }
+        else
+        {
+            if (player2choose == 1)
+            {
+                this->removePlayer((*genkenPlayers[genkens - 1]).getPlayerNumber());
+                genkens--;
+            }
+            else
+            {
+                int eliminatedNumber = (*genkenPlayers[genkens - 2]).getPlayerNumber();
+                genkenPlayers[genkens - 2] = genkenPlayers[genkens - 1];
+                this->removePlayer(eliminatedNumber);
+                genkens--;
+            }
+        }
+    }
+
+    cout << "----------------------------------------" << endl;
+    cout << "Fourth and last game has ended!" << endl;
+    cout << "----------------------------------------" << endl;
+    cout << "Left players: " << this->alivePlayers[0] + this->alivePlayers[1] + this->alivePlayers[2] << endl;
+    cout << "Total prize pool: " << this->prize << "$" << endl;
+    cout << "----------------------------------------" << endl;
+
+    this->setWinner(genkenPlayers[0]);
+
+    this->printLeftPlayers();
+}
+
+void Game::end()
+{
+    int supervisorNumberWinner = this->winner->getSupervisorNumber(), supervisorDebt;
+
+    switch (supervisorNumberWinner)
+    {
+    case 1:
+    case 2:
+    case 3:
+        supervisorDebt = this->players[0][supervisorNumberWinner - 1]->getDebt();
+        break;
+    case 4:
+    case 5:
+    case 6:
+        supervisorDebt = this->players[1][supervisorNumberWinner - 4]->getDebt();
+        break;
+    case 7:
+    case 8:
+    case 9:
+        supervisorDebt = this->players[2][supervisorNumberWinner - 7]->getDebt();
+        break;
+    }
+
+    this->supervisorPrize[supervisorNumberWinner] += supervisorDebt * 10;
+
+    cout << "----------------------------------------" << endl;
+    cout << "This edition of the C++ Squid Game has ended!" << endl;
+    cout << "----------------------------------------" << endl;
+    cout << "The winner is: " << (*this->getWinner()).getFullName() << endl;
+    cout << "Win ammount: " << this->prize << "$" << endl;
+    cout << "----------------------------------------" << endl;
+
+    Player *supervisors[9];
+    int teamPrize[3] = {0, 0, 0};
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+        {
+            supervisors[i * 3 + j] = this->players[i][j];
+            teamPrize[i] += this->supervisorPrize[i * 3 + j];
+        }
+
+    for (int i = 0; i < 9; i++)
+        for (int j = i + 1; j < 9; j++)
+            if (this->supervisorPrize[supervisors[i]->getSupervisorNumber()] < this->supervisorPrize[supervisors[j]->getSupervisorNumber()])
+                swap(supervisors[i], supervisors[j]);
+
+    for (int i = 0; i < 9; i++)
+        cout << "Supervisor " << supervisors[i]->getSupervisorNumber() << ": " << supervisors[i]->getFullName() << " has won " << this->supervisorPrize[supervisors[i]->getSupervisorNumber()] << "$" << endl;
+
+    cout << "----------------------------------------" << endl;
+
+    int maxPrize = teamPrize[0], maxPrizeIndex = 0;
+    for (int i = 1; i < 3; i++)
+        if (teamPrize[i] > maxPrize)
+        {
+            maxPrize = teamPrize[i];
+            maxPrizeIndex = i;
+        }
+
+    cout << "Team " << maxPrizeIndex + 1 << " has won the most money: " << maxPrize << "$!" << endl;
+    cout << "----------------------------------------" << endl;
+}
+
+void Game::setWinner(Player *winner)
+{
+    this->winner = winner;
+}
+
+Player *Game::getWinner()
+{
+    return this->winner;
 }
