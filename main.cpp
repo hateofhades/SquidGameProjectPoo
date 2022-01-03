@@ -1,17 +1,13 @@
 #include <iostream>
-#include <stdlib.h>
-#include <time.h>
 
-#include "Player.h"
+#include "Game.h"
 
 using namespace std;
 
 int main()
 {
-    srand(time(NULL));
-    Player jonni("John", "Doe", "New York", true, CIRCLE);
-
-    jonni.printInfo();
+    Game game;
+    game.printInfo();
 
     return 0;
 }
