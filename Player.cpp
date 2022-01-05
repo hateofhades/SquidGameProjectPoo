@@ -6,6 +6,11 @@
 
 using namespace std;
 
+Player::~Player()
+{
+    cout << this->getFullName() << " has been eliminated! " << this->getDebt() << "$ has been added to the prize pool." << endl;
+}
+
 Player::Player()
 {
     this->firstName = "Not a valid player";

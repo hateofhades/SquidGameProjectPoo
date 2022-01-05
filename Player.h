@@ -10,6 +10,7 @@ private:
     unsigned int debt, weight, playerNumber, supervisorNumber;
 
 public:
+    virtual ~Player();
     Player();
     Player(string firstName, string lastName, string city);
     string getFullName();

@@ -44,8 +44,10 @@ Game::Game()
             else
             {
                 this->players[i][j] = new Supervisor(firstNames[rand() % 30], lastNames[rand() % 30], cities[rand() % 30], (supervisorType)i);
-                (*this->players[i][j]).setSupervisorNumber(supervisorNumber++);
-                this->supervisorPrize[supervisorNumber] -= this->players[i][j]->getDebt();
+                (*this->players[i][j]).setSupervisorNumber(supervisorNumber);
+                this->supervisorPrize[supervisorNumber - 1] = -this->players[i][j]->getDebt();
+
+                supervisorNumber++;
             }
         }
     }
@@ -122,12 +124,14 @@ void Game::removePlayer(int playerNumber)
 
             int supervisorNumber = (*this->players[team - 1][i]).getSupervisorNumber();
             this->supervisorPrize[supervisorNumber - 1] += (*this->players[team - 1][i]).getDebt();
-            cout << (*this->players[team - 1][i]).getDebt() << "$ has been added to the supervisor prize pool for supervisor number " << supervisorNumber << ": " << (*this->players[team - 1][supervisorNumber - ((team - 1) * 3) - 1]).getFullName() << "." << endl;
 
             for (int j = i + 1; j <= 3 + this->alivePlayers[team - 1]; j++)
                 (*this->players[team - 1][j - 1]) = (*this->players[team - 1][j]);
-            break;
+
+            return;
         }
+
+    throw "Player not found!";
 }
 
 void Game::playRedLightGreenLight()
@@ -139,8 +143,16 @@ void Game::playRedLightGreenLight()
         for (int j = 3; j < 3 + this->alivePlayers[i]; j++)
             if ((*this->players[i][j]).getPlayerNumber() % 2 == 0)
             {
-                this->removePlayer((*this->players[i][j]).getPlayerNumber());
-                j--;
+                try
+                {
+                    this->removePlayer((*this->players[i][j]).getPlayerNumber());
+                    j--;
+                }
+                catch (const char *msg)
+                {
+                    cout << msg << endl;
+                    continue;
+                }
             }
 
     cout << "----------------------------------------" << endl;
@@ -207,7 +219,15 @@ void Game::playTugOfWar()
         cout << "Team 2 has been eliminated!" << endl;
 
         for (int i = 0; i < totalAlive / 4; i++)
-            this->removePlayer((*teams[1][i]).getPlayerNumber());
+            try
+            {
+                this->removePlayer((*teams[1][i]).getPlayerNumber());
+            }
+            catch (const char *msg)
+            {
+                cout << msg << endl;
+                continue;
+            }
     }
     else
     {
@@ -216,7 +236,15 @@ void Game::playTugOfWar()
              << endl;
 
         for (int i = 0; i < totalAlive / 4; i++)
-            this->removePlayer((*teams[0][i]).getPlayerNumber());
+            try
+            {
+                this->removePlayer((*teams[0][i]).getPlayerNumber());
+            }
+            catch (const char *msg)
+            {
+                cout << msg << endl;
+                continue;
+            }
     }
 
     cout << "----------------------------------------" << endl;
@@ -230,7 +258,15 @@ void Game::playTugOfWar()
         cout << "Team 4 has been eliminated!" << endl;
 
         for (int i = 0; i < totalAlive / 4; i++)
-            this->removePlayer((*teams[3][i]).getPlayerNumber());
+            try
+            {
+                this->removePlayer((*teams[3][i]).getPlayerNumber());
+            }
+            catch (const char *msg)
+            {
+                cout << msg << endl;
+                continue;
+            }
     }
     else
     {
@@ -239,7 +275,15 @@ void Game::playTugOfWar()
              << endl;
 
         for (int i = 0; i < totalAlive / 4; i++)
-            this->removePlayer((*teams[2][i]).getPlayerNumber());
+            try
+            {
+                this->removePlayer((*teams[2][i]).getPlayerNumber());
+            }
+            catch (const char *msg)
+            {
+                cout << msg << endl;
+                continue;
+            }
     }
 
     cout << "----------------------------------------" << endl;
@@ -296,7 +340,14 @@ void Game::playMarbles()
             for (int i = player2 + 1; i <= totalMarblers; i++)
                 marblesPlayers[i - 1] = marblesPlayers[i];
 
-            this->removePlayer(lostNumber);
+            try
+            {
+                this->removePlayer(lostNumber);
+            }
+            catch (const char *msg)
+            {
+                cout << msg << endl;
+            }
         }
         else
         {
@@ -313,7 +364,14 @@ void Game::playMarbles()
             for (int i = player2 + 1; i <= totalMarblers; i++)
                 marblesPlayers[i - 1] = marblesPlayers[i];
 
-            this->removePlayer(lostNumber);
+            try
+            {
+                this->removePlayer(lostNumber);
+            }
+            catch (const char *msg)
+            {
+                cout << msg << endl;
+            }
         }
     }
 
@@ -369,14 +427,31 @@ void Game::playGenken()
         {
             if (player2choose == 2)
             {
-                this->removePlayer((*genkenPlayers[genkens - 1]).getPlayerNumber());
+                try
+                {
+                    this->removePlayer((*genkenPlayers[genkens - 1]).getPlayerNumber());
+                }
+                catch (const char *msg)
+                {
+                    cout << msg << endl;
+                }
+
                 genkens--;
             }
             else
             {
                 int eliminatedNumber = (*genkenPlayers[genkens - 2]).getPlayerNumber();
                 genkenPlayers[genkens - 2] = genkenPlayers[genkens - 1];
-                this->removePlayer(eliminatedNumber);
+
+                try
+                {
+                    this->removePlayer(eliminatedNumber);
+                }
+                catch (const char *msg)
+                {
+                    cout << msg << endl;
+                }
+
                 genkens--;
             }
         }
@@ -386,12 +461,29 @@ void Game::playGenken()
             {
                 int eliminatedNumber = (*genkenPlayers[genkens - 2]).getPlayerNumber();
                 genkenPlayers[genkens - 2] = genkenPlayers[genkens - 1];
-                this->removePlayer(eliminatedNumber);
+
+                try
+                {
+                    this->removePlayer(eliminatedNumber);
+                }
+                catch (const char *msg)
+                {
+                    cout << msg << endl;
+                }
+
                 genkens--;
             }
             else
             {
-                this->removePlayer((*genkenPlayers[genkens - 1]).getPlayerNumber());
+                try
+                {
+                    this->removePlayer((*genkenPlayers[genkens - 1]).getPlayerNumber());
+                }
+                catch (const char *msg)
+                {
+                    cout << msg << endl;
+                }
+
                 genkens--;
             }
         }
@@ -399,14 +491,31 @@ void Game::playGenken()
         {
             if (player2choose == 1)
             {
-                this->removePlayer((*genkenPlayers[genkens - 1]).getPlayerNumber());
+                try
+                {
+                    this->removePlayer((*genkenPlayers[genkens - 1]).getPlayerNumber());
+                }
+                catch (const char *msg)
+                {
+                    cout << msg << endl;
+                }
+
                 genkens--;
             }
             else
             {
                 int eliminatedNumber = (*genkenPlayers[genkens - 2]).getPlayerNumber();
                 genkenPlayers[genkens - 2] = genkenPlayers[genkens - 1];
-                this->removePlayer(eliminatedNumber);
+
+                try
+                {
+                    this->removePlayer(eliminatedNumber);
+                }
+                catch (const char *msg)
+                {
+                    cout << msg << endl;
+                }
+
                 genkens--;
             }
         }
@@ -467,11 +576,11 @@ void Game::end()
 
     for (int i = 0; i < 9; i++)
         for (int j = i + 1; j < 9; j++)
-            if (this->supervisorPrize[supervisors[i]->getSupervisorNumber()] < this->supervisorPrize[supervisors[j]->getSupervisorNumber()])
+            if (this->supervisorPrize[supervisors[i]->getSupervisorNumber() - 1] < this->supervisorPrize[supervisors[j]->getSupervisorNumber() - 1])
                 swap(supervisors[i], supervisors[j]);
 
     for (int i = 0; i < 9; i++)
-        cout << "Supervisor " << supervisors[i]->getSupervisorNumber() << ": " << supervisors[i]->getFullName() << " has won " << this->supervisorPrize[supervisors[i]->getSupervisorNumber()] << "$" << endl;
+        cout << "Supervisor " << supervisors[i]->getSupervisorNumber() << ": " << supervisors[i]->getFullName() << " has won " << this->supervisorPrize[supervisors[i]->getSupervisorNumber() - 1] << "$" << endl;
 
     cout << "----------------------------------------" << endl;
 
