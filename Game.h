@@ -12,8 +12,15 @@ private:
     int alivePlayers[3];
     int prize, supervisorPrize[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-public:
     Game();
+    static Game *instance;
+
+public:
+    Game(Game &other) = delete;
+    void operator=(const Game &) = delete;
+
+    static Game *getInstance();
+
     Player *getAlivePlayers();
     void printInfo();
     void printInfo(int team);
@@ -24,6 +31,7 @@ public:
     void playMarbles();
     void playGenken();
     void end();
+    int getSupervisorPrize(int supervisorNumber);
     Player *getWinner();
     void setWinner(Player *winner);
 };

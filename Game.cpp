@@ -17,6 +17,20 @@ string cities[30] = {"New York", "Bucharest", "London", "Paris", "Berlin", "Madr
                      "Moscow", "Beijing", "Tokyo", "Seoul", "Hong Kong", "Bangkok", "Singapore", "Dubai", "Cairo", "Kuala Lumpur",
                      "New Delhi", "Delhi", "Mumbai", "Jaipur", "Surat", "Lucknow", "Mangalore", "Ahmedabad", "Jaipur", "Bhopal"};
 
+template <class T>
+bool isSmaller(T a, T b)
+{
+    return (a < b);
+}
+
+template <>
+bool isSmaller(Supervisor *a, Supervisor *b)
+{
+    Game *game = Game::getInstance();
+
+    return (game->getSupervisorPrize(a->getSupervisorNumber()) < game->getSupervisorPrize(b->getSupervisorNumber()));
+}
+
 Game::Game()
 {
     srand(time(NULL));
@@ -59,6 +73,15 @@ Game::Game()
          << endl
          << endl;
 };
+
+Game *Game::getInstance()
+{
+    if (instance == nullptr)
+    {
+        instance = new Game();
+    }
+    return instance;
+}
 
 void Game::printInfo()
 {
@@ -576,7 +599,7 @@ void Game::end()
 
     for (int i = 0; i < 9; i++)
         for (int j = i + 1; j < 9; j++)
-            if (this->supervisorPrize[supervisors[i]->getSupervisorNumber() - 1] < this->supervisorPrize[supervisors[j]->getSupervisorNumber() - 1])
+            if (isSmaller((Supervisor *)supervisors[i], (Supervisor *)supervisors[j]))
                 swap(supervisors[i], supervisors[j]);
 
     for (int i = 0; i < 9; i++)
@@ -594,6 +617,11 @@ void Game::end()
 
     cout << "Team " << maxPrizeIndex + 1 << " has won the most money: " << maxPrize << "$!" << endl;
     cout << "----------------------------------------" << endl;
+}
+
+int Game::getSupervisorPrize(int supervisorNumber)
+{
+    return this->supervisorPrize[supervisorNumber - 1];
 }
 
 void Game::setWinner(Player *winner)
