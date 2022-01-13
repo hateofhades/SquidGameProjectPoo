@@ -139,10 +139,10 @@ void Game::removePlayer(int playerNumber)
     for (int i = 3; i < 3 + this->alivePlayers[team - 1]; i++)
         if ((int)(*this->players[team - 1][i]).getPlayerNumber() == playerNumber)
         {
-            cout << "Player " << playerNumber << ":  " << (*this->players[team - 1][i]).getFullName() << " has been eliminated!" << endl;
+            // cout << "Player " << playerNumber << ":  " << (*this->players[team - 1][i]).getFullName() << " has been eliminated!" << endl;
 
             this->prize += (*this->players[team - 1][i]).getDebt();
-            cout << (*this->players[team - 1][i]).getDebt() << "$ has been added to the prize pool. Total prize pool: " << this->prize << "$" << endl;
+            // cout << (*this->players[team - 1][i]).getDebt() << "$ has been added to the prize pool. Total prize pool: " << this->prize << "$" << endl;
             this->alivePlayers[team - 1]--;
 
             int supervisorNumber = (*this->players[team - 1][i]).getSupervisorNumber();
@@ -173,7 +173,6 @@ void Game::playRedLightGreenLight()
                 }
                 catch (const char *msg)
                 {
-                    cout << msg << endl;
                     continue;
                 }
             }
@@ -248,7 +247,6 @@ void Game::playTugOfWar()
             }
             catch (const char *msg)
             {
-                cout << msg << endl;
                 continue;
             }
     }
@@ -265,7 +263,6 @@ void Game::playTugOfWar()
             }
             catch (const char *msg)
             {
-                cout << msg << endl;
                 continue;
             }
     }
@@ -287,7 +284,6 @@ void Game::playTugOfWar()
             }
             catch (const char *msg)
             {
-                cout << msg << endl;
                 continue;
             }
     }
@@ -304,7 +300,6 @@ void Game::playTugOfWar()
             }
             catch (const char *msg)
             {
-                cout << msg << endl;
                 continue;
             }
     }
@@ -369,7 +364,6 @@ void Game::playMarbles()
             }
             catch (const char *msg)
             {
-                cout << msg << endl;
             }
         }
         else
@@ -393,7 +387,6 @@ void Game::playMarbles()
             }
             catch (const char *msg)
             {
-                cout << msg << endl;
             }
         }
     }
@@ -456,7 +449,6 @@ void Game::playGenken()
                 }
                 catch (const char *msg)
                 {
-                    cout << msg << endl;
                 }
 
                 genkens--;
@@ -472,7 +464,6 @@ void Game::playGenken()
                 }
                 catch (const char *msg)
                 {
-                    cout << msg << endl;
                 }
 
                 genkens--;
@@ -491,7 +482,6 @@ void Game::playGenken()
                 }
                 catch (const char *msg)
                 {
-                    cout << msg << endl;
                 }
 
                 genkens--;
@@ -504,7 +494,6 @@ void Game::playGenken()
                 }
                 catch (const char *msg)
                 {
-                    cout << msg << endl;
                 }
 
                 genkens--;
@@ -520,7 +509,6 @@ void Game::playGenken()
                 }
                 catch (const char *msg)
                 {
-                    cout << msg << endl;
                 }
 
                 genkens--;
@@ -536,7 +524,6 @@ void Game::playGenken()
                 }
                 catch (const char *msg)
                 {
-                    cout << msg << endl;
                 }
 
                 genkens--;
